@@ -1,0 +1,76 @@
+﻿@model Api_Post.Models.Cuenta
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Crear Publicacion</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Nombre" class="control-label">Nombre</label>
+                <input asp-for="Nombre" class="form-control" />
+                <span asp-validation-for="Nombre" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="FotoPerfil" class="control-label">Foto de Perfil</label>
+                <input asp-for="FotoPerfil" type="file" class="form-control" />
+                <span asp-validation-for="FotoPerfil" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Biografia" class="control-label">Biografía</label>
+                <input asp-for="Biografia" class="form-control" />
+                <span asp-validation-for="Biografia" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Genero" class="control-label">Género</label>
+                <input asp-for="Genero" class="form-control" />
+                <span asp-validation-for="Genero" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="FechaNacimiento" class="control-label">Fecha de Nacimiento</label>
+                <input asp-for="FechaNacimiento" type="date" class="form-control" />
+                <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Musico" class="control-label">Es Músico</label>
+                <input asp-for="Musico" type="checkbox" class="form-check-input" />
+                <span asp-validation-for="Musico" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Contrasena" class="control-label">Contraseña</label>
+                <input asp-for="Contrasena" type="password" class="form-control" />
+                <span asp-validation-for="Contrasena" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Privado" class="control-label">Privado</label>
+                <input asp-for="Privado" type="checkbox" class="form-check-input" />
+                <span asp-validation-for="Privado" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Crear" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Volver</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
