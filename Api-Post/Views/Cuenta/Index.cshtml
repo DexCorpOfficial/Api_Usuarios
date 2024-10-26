@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Api_Post.Models.Cuenta>
+﻿@model IEnumerable<Api_Usuarios.Models.Cuenta>
 
 @{
     ViewData["Title"] = "Cuentas";
@@ -32,13 +32,10 @@
                 @Html.DisplayFor(modelItem => item.Biografia)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Genero)
+                @Html.DisplayFor(modelItem => item.Fecha_Creacion)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FechaCreacion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaNacimiento)
+                @Html.DisplayFor(modelItem => item.fecha_nac)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Privado)
@@ -47,18 +44,9 @@
                 @Html.DisplayFor(modelItem => item.Activo)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.FechaCreacion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Seguidores)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Seguidos)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Editar</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Detalles</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Eliminar</a>
+                <a asp-action="Edit" asp-route-id="@item.ID">Editar</a> |
+                <a asp-action="Details" asp-route-id="@item.ID">Detalles</a> |
+                <a asp-action="Delete" asp-route-id="@item.ID">Eliminar</a>
             </td>
         </tr>
         }

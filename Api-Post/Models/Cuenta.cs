@@ -1,66 +1,38 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Api_Post.Models
+namespace Api_Usuarios.Models
 {
-    [Table("cuenta")]
     public class Cuenta
     {
-        [Key]
-        [Column("id")]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-
-        public int Id { get; set; }
-
-        [Required]
-        [StringLength(50)]
-        [Column("nombre")]
-        public string Nombre { get; set; }
-
-        [Column("foto_perfil")]
-        public byte[] FotoPerfil { get; set; }
-
-        [StringLength(200)]
-        [Column("biografia")]
-        public string Biografia { get; set; }
-
-        [Required]
-        [Column("seguidores")]
-        public int Seguidores { get; set; } = 0;
-
-        [Required]
-        [StringLength(30)]
-        [Column("genero")]
-        public string Genero { get; set; }
-
-        [Required]
-        [Column("seguidos")]
-        public int Seguidos { get; set; } = 0;
-
-        [Required]
-        [Column("fecha_creacion")]
-        public DateTime FechaCreacion { get; set; } = DateTime.Now;
-
-        [Required]
-        [Column("fecha_nacimiento")]
-        public DateTime FechaNacimiento { get; set; }
-
-        [Required]
-        [Column("musico")]
-        public bool Musico { get; set; } = false;
-
-        [Required]
-        [Column("activo")]
-        public bool Activo { get; set; } = true;
+        public int ID { get; set; }
 
         [Required]
         [StringLength(100)]
-        [Column("contrasena")]
-        public string Contrasena { get; set; }
+        public string Nombre { get; set; }
 
         [Required]
-        [Column("privado")]
-        public bool Privado { get; set; } = true;
+        [StringLength(255)]
+        public string Contrasenia { get; set; }
+
+        [Required]
+        public DateTime Fecha_Creacion { get; set; } = DateTime.Now;
+
+        [Required]
+        public DateTime fecha_nac { get; set; }
+
+        public byte[] foto_perfil { get; set; }
+
+        [Required]
+        public bool Musico { get; set; }
+
+        [Required]
+        public bool Privado { get; set; }
+
+        public string Biografia { get; set; }
+
+        [Required]
+        public bool Activo { get; set; } = true;
     }
 }

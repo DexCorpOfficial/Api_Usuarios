@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.34931.43
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api-Post", "Api-Post\Api-Post.csproj", "{64E8A813-CB09-4D2E-A79E-1280F0C0C4C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api_Usuario", "Api-Post\Api_Usuario.csproj", "{64E8A813-CB09-4D2E-A79E-1280F0C0C4C7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

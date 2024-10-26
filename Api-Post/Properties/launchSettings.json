@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Api_Post": {
+    "Api_Usuario": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": true,

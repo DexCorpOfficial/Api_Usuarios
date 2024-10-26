@@ -1,12 +1,13 @@
 ﻿using Api_Post.Data;
 using Api_Post.Models;
+using Api_Usuarios.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Api_Post.Controllers
+namespace Api_Usuarios.Controllers
 {
     public class CuentaController : Controller
     {
@@ -37,7 +38,7 @@ namespace Api_Post.Controllers
             }
 
             var Cuenta = await _context.Cuenta
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.ID == id);
             if (Cuenta == null)
             {
                 return new Cuenta();
@@ -57,7 +58,7 @@ namespace Api_Post.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<Cuenta> Create([Bind("Id, Nombre, FotoPerfil, Biografia, Seguidores, Genero, Seguidos, FechaCreacion, FechaNacimiento, Musico, Activo, Contrasena, Privado")] Cuenta Cuenta)
+        public async Task<Cuenta> Create([Bind("ID, Nombre, foto_perfil, Biografia, fecha_nac, fecha_creacion, Musico, activo, Contrasenia, Privado")] Cuenta Cuenta)
         {
             //https://sentry.io/answers/how-to-send-a-post-request-in-net-using-c-sharp/
             //curl -X POST https://localhost:5001/Cuenta/create -H "Content-Type: application/json" -d '{"titulo":"Alice","descripcion":"descripciondeprueba","idDeUsuario":5}'
@@ -83,10 +84,11 @@ namespace Api_Post.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Editar(int id, [Bind("Id, Nombre, FotoPerfil, Biografia, Seguidores, Genero, Seguidos, FechaCreacion, FechaNacimiento, Musico, Activo, Contrasena, Privado")] Cuenta cuenta)
+        [ValidateAntiForgeryToken] 
+
+        public async Task<IActionResult> Edit(int id, [Bind("Nombre, foto_perfil, Biografia, fecha_nac, Musico, Contrasenia, Privado")] Cuenta cuenta)
         {
-            if (id != cuenta.Id)
+            if (id != cuenta.ID)
             {
                 return NotFound();
             }
@@ -95,12 +97,12 @@ namespace Api_Post.Controllers
             {
                 try
                 {
-                    _context.Cuenta.Update(cuenta);
+                    _context.Entry(cuenta).State = EntityState.Modified;
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CuentaExists(cuenta.Id))
+                    if (!CuentaExists(cuenta.ID))
                     {
                         return NotFound();
                     }
@@ -109,13 +111,10 @@ namespace Api_Post.Controllers
                         throw;
                     }
                 }
-                // Redirigir a la acción Details después de guardar los cambios
-                return RedirectToAction(nameof(Index));
+                return IActionResult;
             }
-            return View(cuenta);
+            return IActionResult;
         }
-
-
         // GET: Cuenta/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -125,7 +124,7 @@ namespace Api_Post.Controllers
             }
 
             var Cuenta = await _context.Cuenta
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .FirstOrDefaultAsync(m => m.ID == id);
             if (Cuenta == null)
             {
                 return NotFound();
@@ -151,7 +150,7 @@ namespace Api_Post.Controllers
 
         private bool CuentaExists(int id)
         {
-            return _context.Cuenta.Any(e => e.Id == id);
+            return _context.Cuenta.Any(e => e.ID == id);
         }
     }
 }

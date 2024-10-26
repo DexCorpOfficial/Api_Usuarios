@@ -1,4 +1,4 @@
-﻿@model Api_Post.Models.Cuenta
+﻿@model Api_Usuarios.Models.Cuenta
 
 @{
     ViewData["Title"] = "Editar Cuenta";
@@ -11,7 +11,7 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="ID" />
 
             <div class="form-group">
                 <label asp-for="Nombre" class="control-label">Nombre</label>
@@ -26,21 +26,15 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="FotoPerfil" class="control-label">Foto de Perfil</label>
-                <input asp-for="FotoPerfil" type="file" class="form-control" />
-                <span asp-validation-for="FotoPerfil" class="text-danger"></span>
+                <label asp-for="foto_perfil" class="control-label">Foto de Perfil</label>
+                <input asp-for="foto_perfil" type="file" class="form-control" />
+                <span asp-validation-for="foto_perfil" class="text-danger"></span>
             </div>
 
             <div class="form-group">
-                <label asp-for="Genero" class="control-label">Género</label>
-                <input asp-for="Genero" class="form-control" />
-                <span asp-validation-for="Genero" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="FechaNacimiento" class="control-label">Fecha de Nacimiento</label>
-                <input asp-for="FechaNacimiento" type="date" class="form-control" />
-                <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
+                <label asp-for="fecha_nac" class="control-label">Fecha de Nacimiento</label>
+                <input asp-for="fecha_nac" type="date" class="form-control" />
+                <span asp-validation-for="fecha_nac" class="text-danger"></span>
             </div>
 
             <div class="form-group">
@@ -55,9 +49,9 @@
                 <span asp-validation-for="Privado" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Contrasena" class="control-label">Contrasena</label>
-                <input asp-for="Contrasena" class="form-control" />
-                <span asp-validation-for="Contrasena" class="text-danger"></span>
+                <label asp-for="Contrasenia" class="control-label">Contrasena</label>
+                <input asp-for="Contrasenia" class="form-control" />
+                <span asp-validation-for="Contrasenia" class="text-danger"></span>
             </div>
 
             <div class="form-group">
