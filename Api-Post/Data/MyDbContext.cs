@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Api_Usuarios.Models;
 
-namespace Api_Post.Data
+namespace Api_Usuarios.Data
 {
     public class MyDbContext : DbContext
     {

@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Api_Post
+namespace Api_Usuarios
 {
     public class Program
     {

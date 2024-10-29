@@ -1,6 +1,6 @@
 using System;
 
-namespace Api_Post.Models
+namespace Api_Usuarios.Models
 {
     public class ErrorViewModel
     {

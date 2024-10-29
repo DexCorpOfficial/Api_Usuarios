@@ -1,4 +1,4 @@
-﻿using Api_Post.Models;
+﻿using Api_Usuarios.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Api_Post.Controllers //este controlador se borra
+namespace Api_Usuarios.Controllers //este controlador se borra
 {
     public class HomeController : Controller
     {

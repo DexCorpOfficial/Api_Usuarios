@@ -1,10 +1,10 @@
-﻿using Api_Post.Data;
-using Api_Post.Models;
+﻿using Api_Usuarios.Data;
 using Api_Usuarios.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -55,21 +55,29 @@ namespace Api_Usuarios.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<Cuenta> Create([Bind("ID, Nombre, foto_perfil, Biografia, fecha_nac, fecha_creacion, Musico, activo, Contrasenia, Privado")] Cuenta Cuenta)
+        public async Task<Cuenta> Create([Bind("ID, Nombre, foto_perfil, Biografia, fecha_nac, fecha_creacion, Musico, activo, Contrasenia, Privado")] Cuenta cuenta)
         {
-            //https://sentry.io/answers/how-to-send-a-post-request-in-net-using-c-sharp/
-            //curl -X POST https://localhost:5001/Cuenta/create -H "Content-Type: application/json" -d '{"titulo":"Alice","descripcion":"descripciondeprueba","idDeUsuario":5}'
             if (ModelState.IsValid)
             {
+                // Verifica si 'foto_perfil' está vacío y asigna la imagen predeterminada si es necesario
+                if (cuenta.foto_perfil == null || cuenta.foto_perfil.Length == 0)
+                {
+                        cuenta.foto_perfil = Properties.Resources.Foto_de_Perfil_Por_Defecto;
+                }
 
-
-
-                _context.Add(Cuenta);
+                cuenta.Fecha_Creacion = DateTime.Now;
+                cuenta.Activo = true;
+                _context.Add(cuenta);
                 await _context.SaveChangesAsync();
-                return Cuenta;
+
+                return cuenta;
             }
-            return Cuenta;
+
+            return cuenta;
         }
+
+
+
 
         // GET: Cuenta/Edit/5
         public IActionResult Edit()
