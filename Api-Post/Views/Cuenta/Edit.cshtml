@@ -6,13 +6,10 @@
 
 <h1>Editar Cuenta</h1>
 
-<hr />
+<hr />>
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="ID" />
-
+        <form asp-action="Edit" method="post">
             <div class="form-group">
                 <label asp-for="Nombre" class="control-label">Nombre</label>
                 <input asp-for="Nombre" class="form-control" />
@@ -48,21 +45,19 @@
                 <input asp-for="Privado" type="checkbox" class="form-check-input" />
                 <span asp-validation-for="Privado" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <label asp-for="Contrasenia" class="control-label">Contrasena</label>
+                <label asp-for="Contrasenia" class="control-label">Contraseña</label>
                 <input asp-for="Contrasenia" class="form-control" />
                 <span asp-validation-for="Contrasenia" class="text-danger"></span>
             </div>
 
             <div class="form-group">
                 <input type="submit" value="Editar" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Volver</a>
 </div>
 
 @section Scripts {

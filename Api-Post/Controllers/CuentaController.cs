@@ -3,6 +3,7 @@ using Api_Post.Models;
 using Api_Usuarios.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,10 +25,6 @@ namespace Api_Usuarios.Controllers
         {
             return _context.Cuenta.ToListAsync();
         }
-        /*public async Task<IActionResult> Index()
-        {
-            return View(await _context.Cuenta.ToListAsync());
-        }*/
 
         // GET: Cuenta/Details/5
         public async Task<Cuenta> Details(int? id)
@@ -84,37 +81,51 @@ namespace Api_Usuarios.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken] 
+        [ValidateAntiForgeryToken]
 
-        public async Task<IActionResult> Edit(int id, [Bind("Nombre, foto_perfil, Biografia, fecha_nac, Musico, Contrasenia, Privado")] Cuenta cuenta)
+        public async Task<Cuenta> Edit(int id, [Bind("ID, Nombre, foto_perfil, Biografia, fecha_nac, Musico, Contrasenia, Privado")] Cuenta cuentaActualizada)
         {
-            if (id != cuenta.ID)
+            // Busca la cuenta existente en la base de datos usando el ID recibido
+            var cuentaExistente = await _context.Cuenta.FindAsync(id);
+
+            // Verifica si la cuenta no existe y retorna un error si es necesario
+            if (cuentaExistente == null)
             {
-                return NotFound();
+                return new Cuenta(); // Maneja el error o redirecciona como prefieras
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Entry(cuenta).State = EntityState.Modified;
+                    // Actualiza solo los campos permitidos sin tocar el ID, fecha de creación o activo
+                    cuentaExistente.Nombre = cuentaActualizada.Nombre;
+                    cuentaExistente.foto_perfil = cuentaActualizada.foto_perfil;
+                    cuentaExistente.Biografia = cuentaActualizada.Biografia;
+                    cuentaExistente.fecha_nac = cuentaActualizada.fecha_nac;
+                    cuentaExistente.Musico = cuentaActualizada.Musico;
+                    cuentaExistente.Contrasenia = cuentaActualizada.Contrasenia;
+                    cuentaExistente.Privado = cuentaActualizada.Privado;
+
+                    // Guarda los cambios
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CuentaExists(cuenta.ID))
+                    if (!CuentaExists(cuentaExistente.ID))
                     {
-                        return NotFound();
+                        return new Cuenta(); // Manejo de error si la cuenta no existe
                     }
                     else
                     {
                         throw;
                     }
                 }
-                return IActionResult;
             }
-            return IActionResult;
+            return cuentaExistente;
         }
+
+
         // GET: Cuenta/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
