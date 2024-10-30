@@ -55,7 +55,7 @@ namespace Api_Usuarios.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<Cuenta> Create([Bind("ID, Nombre, foto_perfil, Biografia, fecha_nac, fecha_creacion, Musico, activo, Contrasenia, Privado")] Cuenta cuenta)
+        public async Task<Cuenta> Create([Bind("ID, Nombre, genero, foto_perfil, Biografia, fecha_nac, fecha_creacion, Musico, activo, Contrasenia, Privado")] Cuenta cuenta)
         {
             if (ModelState.IsValid)
             {
@@ -91,7 +91,7 @@ namespace Api_Usuarios.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
 
-        public async Task<Cuenta> Edit(int id, [Bind("ID, Nombre, foto_perfil, Biografia, fecha_nac, Musico, Contrasenia, Privado")] Cuenta cuentaActualizada)
+        public async Task<Cuenta> Edit(int id, [Bind("ID, Nombre, genero, foto_perfil, Biografia, fecha_nac, Musico, Contrasenia, Privado")] Cuenta cuentaActualizada)
         {
             // Busca la cuenta existente en la base de datos usando el ID recibido
             var cuentaExistente = await _context.Cuenta.FindAsync(id);
@@ -107,6 +107,7 @@ namespace Api_Usuarios.Controllers
                 try
                 {
                     // Actualiza solo los campos permitidos sin tocar el ID, fecha de creación o activo
+                    cuentaExistente.genero = cuentaActualizada.genero;
                     cuentaExistente.Nombre = cuentaActualizada.Nombre;
                     cuentaExistente.foto_perfil = cuentaActualizada.foto_perfil;
                     cuentaExistente.Biografia = cuentaActualizada.Biografia;

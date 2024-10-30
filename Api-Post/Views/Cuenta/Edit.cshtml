@@ -17,6 +17,12 @@
             </div>
 
             <div class="form-group">
+                <label asp-for="genero" class="control-label">Nombre</label>
+                <input asp-for="genero" class="form-control" />
+                <span asp-validation-for="genero" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
                 <label asp-for="Biografia" class="control-label">Biografía</label>
                 <input asp-for="Biografia" class="form-control" />
                 <span asp-validation-for="Biografia" class="text-danger"></span>

@@ -13,6 +13,10 @@ namespace Api_Usuarios.Models
         public string Nombre { get; set; }
 
         [Required]
+        [StringLength(50)]
+        public string genero { get; set; }
+
+        [Required]
         [StringLength(255)]
         public string Contrasenia { get; set; }
 
