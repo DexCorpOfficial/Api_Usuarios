@@ -4,13 +4,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Api_Usuarios.Controllers
 {
-    public class CuentaController : Controller
+    [ApiController]
+    [Route("api/[Cuenta]")]
+    public class CuentaController : ControllerBase // Cambia a ControllerBase
     {
         private readonly MyDbContext _context;
 
@@ -19,153 +20,89 @@ namespace Api_Usuarios.Controllers
             _context = context;
         }
 
-        // GET: Cuenta
-
-        public Task<List<Cuenta>> Index()
+        // GET: api/Cuenta
+        [HttpGet]
+        public async Task<ActionResult<List<Cuenta>>> GetAll()
         {
-            return _context.Cuenta.ToListAsync();
+            return await _context.Cuenta.ToListAsync();
         }
 
-        // GET: Cuenta/Details/5
-        public async Task<Cuenta> Details(int? id)
-        {
-            if (id == null)
-            {
-                return new Cuenta();
-            }
-
-            var Cuenta = await _context.Cuenta
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (Cuenta == null)
-            {
-                return new Cuenta();
-            }
-
-            return Cuenta;
-        }
-
-        // GET: Cuenta/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Cuenta/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<Cuenta> Create([Bind("ID, Nombre, genero, foto_perfil, Biografia, fecha_nac, fecha_creacion, Musico, activo, Contrasenia, Privado")] Cuenta cuenta)
-        {
-            if (ModelState.IsValid)
-            {
-                // Verifica si 'foto_perfil' está vacío y asigna la imagen predeterminada si es necesario
-                if (cuenta.foto_perfil == null || cuenta.foto_perfil.Length == 0)
-                {
-                        cuenta.foto_perfil = Properties.Resources.Foto_de_Perfil_Por_Defecto;
-                }
-
-                cuenta.Fecha_Creacion = DateTime.Now;
-                cuenta.Activo = true;
-                _context.Add(cuenta);
-                await _context.SaveChangesAsync();
-
-                return cuenta;
-            }
-
-            return cuenta;
-        }
-
-
-
-
-        // GET: Cuenta/Edit/5
-        public IActionResult Edit()
-        {
-            return View();
-        }
-
-        // POST: Cuenta/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-
-        public async Task<Cuenta> Edit(int id, [Bind("ID, Nombre, genero, foto_perfil, Biografia, fecha_nac, Musico, Contrasenia, Privado")] Cuenta cuentaActualizada)
-        {
-            // Busca la cuenta existente en la base de datos usando el ID recibido
-            var cuentaExistente = await _context.Cuenta.FindAsync(id);
-
-            // Verifica si la cuenta no existe y retorna un error si es necesario
-            if (cuentaExistente == null)
-            {
-                return new Cuenta(); // Maneja el error o redirecciona como prefieras
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    // Actualiza solo los campos permitidos sin tocar el ID, fecha de creación o activo
-                    cuentaExistente.genero = cuentaActualizada.genero;
-                    cuentaExistente.Nombre = cuentaActualizada.Nombre;
-                    cuentaExistente.foto_perfil = cuentaActualizada.foto_perfil;
-                    cuentaExistente.Biografia = cuentaActualizada.Biografia;
-                    cuentaExistente.fecha_nac = cuentaActualizada.fecha_nac;
-                    cuentaExistente.Musico = cuentaActualizada.Musico;
-                    cuentaExistente.Contrasenia = cuentaActualizada.Contrasenia;
-                    cuentaExistente.Privado = cuentaActualizada.Privado;
-
-                    // Guarda los cambios
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CuentaExists(cuentaExistente.ID))
-                    {
-                        return new Cuenta(); // Manejo de error si la cuenta no existe
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-            }
-            return cuentaExistente;
-        }
-
-
-        // GET: Cuenta/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var Cuenta = await _context.Cuenta
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (Cuenta == null)
-            {
-                return NotFound();
-            }
-
-            return View(Cuenta);
-        }
-
-        // POST: Cuenta/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        // GET: api/Cuenta/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Cuenta>> GetById(int id)
         {
             var cuenta = await _context.Cuenta.FindAsync(id);
-            if (cuenta != null)
+            if (cuenta == null)
             {
-                cuenta.Activo = false;
-                _context.Cuenta.Update(cuenta);
-                await _context.SaveChangesAsync();
+                return NotFound(); // Devuelve 404 si no se encuentra la cuenta
             }
-            return RedirectToAction(nameof(Index)); // Redirige al índice después de eliminar
+
+            return Ok(cuenta); // Devuelve la cuenta encontrada
+        }
+
+        // POST: api/Cuenta
+        [HttpPost]
+        public async Task<ActionResult<Cuenta>> Create([FromBody] Cuenta cuenta)
+        {
+            if (ModelState.IsValid)
+            {
+                // Asigna la fecha de creación y el estado activo
+                cuenta.Fecha_Creacion = DateTime.Now;
+                cuenta.Activo = true;
+
+                _context.Cuenta.Add(cuenta);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(GetById), new { id = cuenta.ID }, cuenta); // Devuelve 201 con la nueva cuenta creada
+            }
+
+            return BadRequest(ModelState); // Devuelve 400 si el modelo es inválido
+        }
+
+        // PUT: api/Cuenta/5
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Update(int id, [FromBody] Cuenta cuentaActualizada)
+        {
+            var cuentaExistente = await _context.Cuenta.FindAsync(id);
+            if (cuentaExistente == null)
+            {
+                return NotFound(); // Devuelve 404 si no se encuentra la cuenta
+            }
+
+            if (ModelState.IsValid)
+            {
+                // Actualiza solo los campos permitidos
+                cuentaExistente.genero = cuentaActualizada.genero;
+                cuentaExistente.Nombre = cuentaActualizada.Nombre;
+                cuentaExistente.foto_perfil = cuentaActualizada.foto_perfil;
+                cuentaExistente.Biografia = cuentaActualizada.Biografia;
+                cuentaExistente.fecha_nac = cuentaActualizada.fecha_nac;
+                cuentaExistente.Musico = cuentaActualizada.Musico;
+                cuentaExistente.Contrasenia = cuentaActualizada.Contrasenia;
+                cuentaExistente.Privado = cuentaActualizada.Privado;
+
+                await _context.SaveChangesAsync();
+                return NoContent(); // Devuelve 204 si la actualización fue exitosa
+            }
+
+            return BadRequest(ModelState); // Devuelve 400 si el modelo es inválido
+        }
+
+        // DELETE: api/Cuenta/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var cuenta = await _context.Cuenta.FindAsync(id);
+            if (cuenta == null)
+            {
+                return NotFound(); // Devuelve 404 si no se encuentra la cuenta
+            }
+
+            cuenta.Activo = false; // Desactiva la cuenta sin eliminarla
+            _context.Cuenta.Update(cuenta);
+            await _context.SaveChangesAsync();
+
+            return NoContent(); // Devuelve 204 para indicar que la operación fue exitosa
         }
 
         private bool CuentaExists(int id)

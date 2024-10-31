@@ -1,6 +1,5 @@
 ﻿using Api_Usuarios.Data;
 using Api_Usuarios.Models;
-using Api_Usuarios.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,7 +9,9 @@ using System.Threading.Tasks;
 
 namespace Api_Usuarios.Controllers
 {
-    public class InteractuanController : Controller
+    [ApiController]
+    [Route("api/[Interactuan]")]
+    public class InteractuanController : ControllerBase
     {
         private readonly MyDbContext _context;
 
@@ -19,59 +20,46 @@ namespace Api_Usuarios.Controllers
             _context = context;
         }
 
-        // GET: Interactuan
-        public Task<List<Interactuan>> Index()
+        // GET: api/Interactuan
+        [HttpGet]
+        public async Task<ActionResult<List<Interactuan>>> GetAll()
         {
-            return _context.Interactuan.ToListAsync();
+            return await _context.Interactuan.ToListAsync();
         }
 
-        // GET: Interactuan/Details
-        public async Task<Interactuan> Details(int? IDdeEmisor, int? IDdeReceptor, string? Tipo)
+        // GET: api/Interactuan/Details
+        [HttpGet("Details")]
+        public async Task<ActionResult<Interactuan>> GetById(int IDdeEmisor, int IDdeReceptor, string Tipo)
         {
-            if (IDdeEmisor == null || IDdeReceptor == null || Tipo == null)
-            {
-                return new Interactuan();
-            }
-
             var interactuan = await _context.Interactuan
                 .FirstOrDefaultAsync(m => m.IDdeEmisor == IDdeEmisor && m.IDdeReceptor == IDdeReceptor && m.Tipo == Tipo);
 
             if (interactuan == null)
             {
-                return new Interactuan();
+                return NotFound();
             }
 
-            return interactuan;
+            return Ok(interactuan);
         }
 
-        // GET: Interactuan/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Interactuan/Create
+        // POST: api/Interactuan
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<Interactuan> Create([Bind("IDdeEmisor,IDdeReceptor,Tipo,Fecha,Notificacion,Estado,Contenido,Seguido")] Interactuan interactuan)
+        public async Task<ActionResult<Interactuan>> Create([FromBody] Interactuan interactuan)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(interactuan);
                 await _context.SaveChangesAsync();
-                return interactuan;
+                return CreatedAtAction(nameof(GetById), new { IDdeEmisor = interactuan.IDdeEmisor, IDdeReceptor = interactuan.IDdeReceptor, Tipo = interactuan.Tipo }, interactuan);
             }
-            return interactuan;
+
+            return BadRequest(ModelState);
         }
 
-        // GET: Interactuan/Delete
-        public async Task<IActionResult> Delete(int? IDdeEmisor, int? IDdeReceptor, string? Tipo)
+        // DELETE: api/Interactuan/Details
+        [HttpDelete("Details")]
+        public async Task<IActionResult> Delete(int IDdeEmisor, int IDdeReceptor, string Tipo)
         {
-            if (IDdeEmisor == null || IDdeReceptor == null || Tipo == null)
-            {
-                return NotFound();
-            }
-
             var interactuan = await _context.Interactuan
                 .FirstOrDefaultAsync(m => m.IDdeEmisor == IDdeEmisor && m.IDdeReceptor == IDdeReceptor && m.Tipo == Tipo);
 
@@ -80,23 +68,10 @@ namespace Api_Usuarios.Controllers
                 return NotFound();
             }
 
-            return View(interactuan);
-        }
+            _context.Interactuan.Remove(interactuan);
+            await _context.SaveChangesAsync();
 
-        // POST: Interactuan/Delete
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int IDdeEmisor, int IDdeReceptor, string Tipo)
-        {
-            var interactuan = await _context.Interactuan
-                .FirstOrDefaultAsync(m => m.IDdeEmisor == IDdeEmisor && m.IDdeReceptor == IDdeReceptor && m.Tipo == Tipo);
-
-            if (interactuan != null)
-            {
-                _context.Interactuan.Remove(interactuan);
-                await _context.SaveChangesAsync();
-            }
-            return RedirectToAction(nameof(Index));
+            return NoContent();
         }
 
         private bool InteractuanExists(int IDdeEmisor, int IDdeReceptor, string Tipo)
