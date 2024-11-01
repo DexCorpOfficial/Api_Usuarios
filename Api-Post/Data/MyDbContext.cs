@@ -11,6 +11,7 @@ namespace Api_Usuarios.Data
 
         public DbSet<Cuenta> Cuenta { get; set; }
         public DbSet<Interactuan> Interactuan { get; set; }
+        public DbSet<Instrumentos> Instrumentos { get; set; } // Agregado el DbSet para Instrumento
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -22,7 +23,8 @@ namespace Api_Usuarios.Data
                 entity.ToTable("cuenta");
                 entity.HasKey(e => e.ID);
             });
- 
+
+            // Configuración de la tabla 'Interactuan'
             modelBuilder.Entity<Interactuan>(entity =>
             {
                 entity.ToTable("interactuan");
@@ -40,6 +42,20 @@ namespace Api_Usuarios.Data
                     .WithMany()
                     .HasForeignKey(i => i.IDdeReceptor)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Configuración de la tabla 'Instrumentos'
+            modelBuilder.Entity<Instrumentos>(entity =>
+            {
+                entity.ToTable("Instrumentos");
+
+                // Configuración de la clave primaria compuesta
+                entity.HasKey(e => new { e.IDdeCuenta, e.Instrumento });
+
+                // Relaciones con la tabla 'Cuenta'
+                entity.HasOne(i => i.Cuenta)
+                    .WithMany()
+                    .HasForeignKey(i => i.IDdeCuenta);
             });
         }
     }

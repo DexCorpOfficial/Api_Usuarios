@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Api_Usuarios.Controllers
 {
     [ApiController]
-    [Route("api/[Interactuan]")]
+    [Route("Interactuan")]
     public class InteractuanController : ControllerBase
     {
         private readonly MyDbContext _context;
@@ -20,19 +20,19 @@ namespace Api_Usuarios.Controllers
             _context = context;
         }
 
-        // GET: api/Interactuan
+        // GET: Interactuan
         [HttpGet]
         public async Task<ActionResult<List<Interactuan>>> GetAll()
         {
             return await _context.Interactuan.ToListAsync();
         }
 
-        // GET: api/Interactuan/Details
-        [HttpGet("Details")]
+        // GET: Interactuan/Details
+        [HttpGet("{IDdeEmisor}/{IDdeReceptor}/{Tipo}")]
         public async Task<ActionResult<Interactuan>> GetById(int IDdeEmisor, int IDdeReceptor, string Tipo)
         {
             var interactuan = await _context.Interactuan
-                .FirstOrDefaultAsync(m => m.IDdeEmisor == IDdeEmisor && m.IDdeReceptor == IDdeReceptor && m.Tipo == Tipo);
+                .FirstOrDefaultAsync(i => i.IDdeEmisor == IDdeEmisor && i.IDdeReceptor == IDdeReceptor && i.Tipo == Tipo);
 
             if (interactuan == null)
             {
@@ -42,13 +42,13 @@ namespace Api_Usuarios.Controllers
             return Ok(interactuan);
         }
 
-        // POST: api/Interactuan
-        [HttpPost]
+        // POST: Interactuan/Create
+        [HttpPost("create")]
         public async Task<ActionResult<Interactuan>> Create([FromBody] Interactuan interactuan)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(interactuan);
+                _context.Interactuan.Add(interactuan);
                 await _context.SaveChangesAsync();
                 return CreatedAtAction(nameof(GetById), new { IDdeEmisor = interactuan.IDdeEmisor, IDdeReceptor = interactuan.IDdeReceptor, Tipo = interactuan.Tipo }, interactuan);
             }
@@ -56,12 +56,12 @@ namespace Api_Usuarios.Controllers
             return BadRequest(ModelState);
         }
 
-        // DELETE: api/Interactuan/Details
-        [HttpDelete("Details")]
+        // DELETE: Interactuan/Details
+        [HttpDelete("{IDdeEmisor}/{IDdeReceptor}/{Tipo}")]
         public async Task<IActionResult> Delete(int IDdeEmisor, int IDdeReceptor, string Tipo)
         {
             var interactuan = await _context.Interactuan
-                .FirstOrDefaultAsync(m => m.IDdeEmisor == IDdeEmisor && m.IDdeReceptor == IDdeReceptor && m.Tipo == Tipo);
+                .FirstOrDefaultAsync(i => i.IDdeEmisor == IDdeEmisor && i.IDdeReceptor == IDdeReceptor && i.Tipo == Tipo);
 
             if (interactuan == null)
             {
@@ -72,11 +72,6 @@ namespace Api_Usuarios.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-
-        private bool InteractuanExists(int IDdeEmisor, int IDdeReceptor, string Tipo)
-        {
-            return _context.Interactuan.Any(e => e.IDdeEmisor == IDdeEmisor && e.IDdeReceptor == IDdeReceptor && e.Tipo == Tipo);
         }
     }
 }
