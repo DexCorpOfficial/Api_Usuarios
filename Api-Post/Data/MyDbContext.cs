@@ -32,13 +32,13 @@ namespace Api_Usuarios.Data
                 // Configuración de la clave primaria compuesta
                 entity.HasKey(e => new { e.IDdeEmisor, e.IDdeReceptor, e.Tipo });
 
-                // Relaciones con la tabla 'Cuenta'
-                entity.HasOne<Cuenta>()
+                // Relaciones con la tabla 'Cuenta' para las propiedades de navegación
+                entity.HasOne(i => i.Emisor)
                     .WithMany()
                     .HasForeignKey(i => i.IDdeEmisor)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                entity.HasOne<Cuenta>()
+                entity.HasOne(i => i.Receptor)
                     .WithMany()
                     .HasForeignKey(i => i.IDdeReceptor)
                     .OnDelete(DeleteBehavior.Restrict);
@@ -58,5 +58,6 @@ namespace Api_Usuarios.Data
                     .HasForeignKey(i => i.IDdeCuenta);
             });
         }
+
     }
 }

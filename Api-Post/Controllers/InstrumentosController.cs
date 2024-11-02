@@ -57,12 +57,47 @@ namespace Api_Usuarios.Controllers
             return BadRequest(ModelState);
         }
 
-        // DELETE: Instrumentos/5
+        // PUT: Instrumentos/Edit
+        [HttpPut("edit/{id}/{instrumento}")]
+        public async Task<IActionResult> Edit(int id, string instrumento, [Bind("Instrumento")] Instrumentos updatedInstrumento)
+        {
+            if (id != updatedInstrumento.IDdeCuenta || instrumento != updatedInstrumento.Instrumento)
+            {
+                return BadRequest();
+            }
+
+            var instrumentoExistente = await _context.Instrumentos
+                .FirstOrDefaultAsync(i => i.IDdeCuenta == id && i.Instrumento == instrumento);
+            if (instrumentoExistente == null)
+            {
+                return NotFound();
+            }
+
+            // Actualiza el instrumento
+            instrumentoExistente.Instrumento = updatedInstrumento.Instrumento;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!InstrumentoExists(id, instrumento))
+                {
+                    return NotFound();
+                }
+                throw;
+            }
+
+            return NoContent();
+        }
+
+        // DELETE: Instrumentos/Delete/{id}?instrumento={nombreInstrumento}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id, string instrumento)
+        public async Task<IActionResult> Delete(int id, [FromQuery] string instrumento)
         {
             var instrumentoExistente = await _context.Instrumentos
-                .FindAsync(id, instrumento);
+                .FirstOrDefaultAsync(i => i.IDdeCuenta == id && i.Instrumento == instrumento);
             if (instrumentoExistente == null)
             {
                 return NotFound();
