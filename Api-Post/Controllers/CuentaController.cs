@@ -135,6 +135,29 @@ namespace Api_Usuarios.Controllers
             return NoContent();
         }
 
+        // PUT: Cuenta/5/actualizar_privacidad
+        [HttpPut("actualizar_privacidad/{id}")]
+        public async Task<IActionResult> ActualizarPrivacidad(int id, [FromBody] bool privacidad)
+        {
+            var cuenta = await _context.Cuenta.FindAsync(id);
+            if (cuenta == null)
+            {
+                return NotFound();
+            }
+
+            cuenta.Privado = privacidad;  // Actualiza el campo 'Privado'
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return Ok(new { message = "Privacidad actualizada correctamente", cuenta });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error al actualizar la privacidad", error = ex.Message });
+            }
+        }
+
         private bool CuentaExists(int id)
         {
             return _context.Cuenta.Any(e => e.ID == id);

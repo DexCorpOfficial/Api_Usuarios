@@ -19,12 +19,27 @@ namespace Api_Usuarios.Controllers
             _context = context;
         }
 
+        public class InstrumentoDto
+        {
+            public int IDdeCuenta { get; set; }
+            public string Instrumento { get; set; }
+        }
+
         // GET: Instrumentos
         [HttpGet]
-        public async Task<ActionResult<List<Instrumentos>>> GetAll()
+        public async Task<ActionResult<List<InstrumentoDto>>> GetAll()
         {
-            return await _context.Instrumentos.ToListAsync();
+            var instrumentos = await _context.Instrumentos.ToListAsync();
+
+            var instrumentosDto = instrumentos.Select(i => new InstrumentoDto
+            {
+                IDdeCuenta = i.IDdeCuenta,
+                Instrumento = i.Instrumento
+            }).ToList();
+
+            return Ok(instrumentosDto);
         }
+
 
         // GET: Instrumentos/5
         [HttpGet("{id}")]
@@ -57,39 +72,25 @@ namespace Api_Usuarios.Controllers
             return BadRequest(ModelState);
         }
 
-        // PUT: Instrumentos/Edit
+        // PUT: Instrumentos/Edit/{id}/{instrumento}
         [HttpPut("edit/{id}/{instrumento}")]
-        public async Task<IActionResult> Edit(int id, string instrumento, [Bind("Instrumento")] Instrumentos updatedInstrumento)
+        public async Task<IActionResult> Edit(int id, string instrumento, [FromBody] Instrumentos updatedInstrumento)
         {
-            if (id != updatedInstrumento.IDdeCuenta || instrumento != updatedInstrumento.Instrumento)
-            {
-                return BadRequest();
-            }
-
+            // Busca el instrumento que corresponde al IDdeCuenta
             var instrumentoExistente = await _context.Instrumentos
-                .FirstOrDefaultAsync(i => i.IDdeCuenta == id && i.Instrumento == instrumento);
+                .FirstOrDefaultAsync(i => i.IDdeCuenta == id);
+
             if (instrumentoExistente == null)
             {
                 return NotFound();
             }
 
-            // Actualiza el instrumento
+            // Actualiza el instrumento directamente
             instrumentoExistente.Instrumento = updatedInstrumento.Instrumento;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!InstrumentoExists(id, instrumento))
-                {
-                    return NotFound();
-                }
-                throw;
-            }
+            await _context.SaveChangesAsync();
 
-            return NoContent();
+            return NoContent(); // Retorna 204 No Content si la actualización fue exitosa
         }
 
         // DELETE: Instrumentos/Delete/{id}?instrumento={nombreInstrumento}

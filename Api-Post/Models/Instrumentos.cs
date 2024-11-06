@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
+using Newtonsoft.Json; // Asegúrate de incluir esta línea
 
 namespace Api_Usuarios.Models
 {
@@ -16,8 +15,9 @@ namespace Api_Usuarios.Models
         [StringLength(100)]
         public string Instrumento { get; set; }
 
-        // Navegación a la entidad Cuenta
+        // Navegación a la entidad Cuenta, pero se ignora en la serialización
         [ForeignKey("IDdeCuenta")]
+        [JsonIgnore] // Esta línea evita que la propiedad se incluya en el JSON
         public virtual Cuenta Cuenta { get; set; }
     }
 }
