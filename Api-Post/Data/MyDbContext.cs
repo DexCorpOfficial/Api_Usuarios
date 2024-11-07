@@ -29,8 +29,8 @@ namespace Api_Usuarios.Data
             {
                 entity.ToTable("interactuan");
 
-                // Configuración de la clave primaria compuesta
-                entity.HasKey(e => new { e.IDdeEmisor, e.IDdeReceptor, e.Tipo });
+                // Configuración de la clave primaria compuesta con ID, IDdeEmisor y IDdeReceptor
+                entity.HasKey(e => new { e.ID, e.IDdeEmisor, e.IDdeReceptor });
 
                 // Relaciones con la tabla 'Cuenta' para las propiedades de navegación
                 entity.HasOne(i => i.Emisor)

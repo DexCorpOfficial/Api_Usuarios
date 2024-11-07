@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Api_Usuarios.Controllers
+namespace Api_Usuarios.Controllers 
 {
     [ApiController]
     [Route("Cuenta")]
@@ -157,6 +157,37 @@ namespace Api_Usuarios.Controllers
                 return StatusCode(500, new { message = "Error al actualizar la privacidad", error = ex.Message });
             }
         }
+
+        // PUT: Cuenta/CambiarContrasenia/{id}
+        [HttpPut("CambiarContrasenia/{id}")]
+        public async Task<IActionResult> CambiarContrasenia(int id, [FromBody] CambiarContraseniaDto cambiarContraseniaDto)
+        {
+            var cuenta = await _context.Cuenta.FindAsync(id);
+            if (cuenta == null)
+            {
+                return NotFound("Usuario no encontrado");
+            }
+
+            // Validar la contraseña anterior
+            if (cuenta.Contrasenia != cambiarContraseniaDto.ContraseniaAnterior)
+            {
+                return BadRequest("La contraseña anterior es incorrecta.");
+            }
+
+            // Cambiar la contraseña
+            cuenta.Contrasenia = cambiarContraseniaDto.ContraseniaNueva;
+            await _context.SaveChangesAsync();
+
+            return NoContent(); // Cambio exitoso
+        }
+
+        // DTO para recibir los datos de cambio de contraseña
+        public class CambiarContraseniaDto
+        {
+            public string ContraseniaAnterior { get; set; }
+            public string ContraseniaNueva { get; set; }
+        }
+
 
         private bool CuentaExists(int id)
         {
