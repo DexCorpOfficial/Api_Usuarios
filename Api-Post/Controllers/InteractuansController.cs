@@ -27,6 +27,46 @@ namespace Api_Usuarios.Controllers
             return await _context.Interactuan.ToListAsync();
         }
 
+        // GET: Interactuan/BuscarInteraccion/{idEmisor}/{idReceptor}
+        [HttpGet("BuscarInteraccion/{idEmisor}/{idReceptor}")]
+        public async Task<ActionResult<Interactuan>> BuscarInteraccion(int idEmisor, int idReceptor)
+        {
+            var interaccion = await _context.Interactuan
+                .Where(i => i.IDdeEmisor == idEmisor && i.IDdeReceptor == idReceptor && i.Seguido == true)
+                .FirstOrDefaultAsync();
+
+            if (interaccion == null)
+            {
+                return NotFound("Interacción no encontrada.");
+            }
+
+            return Ok(interaccion);
+        }
+
+
+        // GET: Interactuan/Seguidores/{idUsuario}
+        [HttpGet("Seguidores/{idUsuario}")]
+        public async Task<ActionResult<int>> GetSeguidores(int idUsuario)
+        {
+            var seguidoresCount = await _context.Interactuan
+                .Where(i => i.IDdeReceptor == idUsuario && i.Seguido == true)
+                .CountAsync();
+
+            return Ok(seguidoresCount);
+        }
+
+        // GET: Interactuan/Seguidos/{idUsuario}
+        [HttpGet("Seguidos/{idUsuario}")]
+        public async Task<ActionResult<int>> GetSeguidos(int idUsuario)
+        {
+            var seguidosCount = await _context.Interactuan
+                .Where(i => i.IDdeEmisor == idUsuario && i.Seguido == true)
+                .CountAsync();
+
+            return Ok(seguidosCount);
+        }
+
+
         // GET: Interactuan/Details
         [HttpGet("{id}")]
         public async Task<ActionResult<Interactuan>> GetById(int id)
@@ -91,46 +131,47 @@ namespace Api_Usuarios.Controllers
         }
 
 
+        [HttpGet("VerificarInteraccion/{idEmisor}/{idReceptor}")]
+        public async Task<ActionResult<bool>> VerificarInteraccion(int idEmisor, int idReceptor)
+        {
+            var existe = await _context.Interactuan
+                .AnyAsync(i => i.IDdeEmisor == idEmisor && i.IDdeReceptor == idReceptor && i.Seguido == true);
+
+            return Ok(existe);
+        }
 
 
 
-        // DELETE: Interactuan/{id}
-        [HttpDelete("{id}")]
+        // DELETE: Interactuan/Delete/{idInteraccion}
+        // DELETE: Interactuan/Delete/{id}
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var interactuan = await _context.Interactuan.FindAsync(id);
-
-            if (interactuan == null)
+            try
             {
-                return NotFound();
+                // Buscar la interacción usando la ID
+                var interaccion = await _context.Interactuan
+                    .Where(i => i.ID == id)
+                    .FirstOrDefaultAsync();
+
+                if (interaccion == null)
+                {
+                    return NotFound("Interacción no encontrada.");
+                }
+
+                // Eliminar la interacción
+                _context.Interactuan.Remove(interaccion);
+                await _context.SaveChangesAsync();
+
+                return NoContent();
             }
-
-            _context.Interactuan.Remove(interactuan);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error al eliminar la interacción: {ex.Message}");
+            }
         }
 
-        // GET: Interactuan/Seguidores/{idUsuario}
-        [HttpGet("Seguidores/{idUsuario}")]
-        public async Task<ActionResult<int>> GetSeguidores(int idUsuario)
-        {
-            var seguidores = await _context.Interactuan
-                .Where(i => i.IDdeReceptor == idUsuario && i.Seguido == true)
-                .CountAsync();
 
-            return Ok(seguidores);
-        }
 
-        // GET: Interactuan/Seguidos/{idUsuario}
-        [HttpGet("Seguidos/{idUsuario}")]
-        public async Task<ActionResult<int>> GetSeguidos(int idUsuario)
-        {
-            var seguidos = await _context.Interactuan
-                .Where(i => i.IDdeEmisor == idUsuario && i.Seguido == true)
-                .CountAsync();
-
-            return Ok(seguidos);
-        }
     }
 }
