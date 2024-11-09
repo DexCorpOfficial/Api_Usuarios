@@ -65,7 +65,7 @@ namespace Api_Usuarios.Controllers
 
         // PUT: Cuenta/Edit/5
         [HttpPut("edit/{id}")]
-        public async Task<IActionResult> Edit(int id, [Bind("ID, Nombre, genero, foto_perfil, Biografia, fecha_nac, Musico, Contrasenia, Privado")] Cuenta cuentaActualizada)
+        public async Task<IActionResult> Edit(int id, [Bind("ID, Nombre, foto_perfil, Biografia, Contrasenia, genero")] Cuenta cuentaActualizada)
         {
             if (id != cuentaActualizada.ID)
             {
@@ -82,21 +82,22 @@ namespace Api_Usuarios.Controllers
             {
                 try
                 {
-                    // Actualiza solo los campos permitidos
-                    cuentaExistente.genero = cuentaActualizada.genero;
+                    // Actualiza el nombre
                     cuentaExistente.Nombre = cuentaActualizada.Nombre;
 
+                    // Actualiza la biografía
+                    cuentaExistente.Biografia = cuentaActualizada.Biografia;
+
+                    cuentaExistente.Contrasenia = cuentaActualizada.Contrasenia;
+
+                    cuentaExistente.genero = cuentaActualizada.genero;
                     // Solo actualiza la foto si se proporciona una nueva
                     if (cuentaActualizada.foto_perfil != null && cuentaActualizada.foto_perfil.Length > 0)
                     {
                         cuentaExistente.foto_perfil = cuentaActualizada.foto_perfil;
                     }
 
-                    cuentaExistente.Biografia = cuentaActualizada.Biografia;
-                    cuentaExistente.fecha_nac = cuentaActualizada.fecha_nac;
-                    cuentaExistente.Musico = cuentaActualizada.Musico;
-                    cuentaExistente.Contrasenia = cuentaActualizada.Contrasenia;
-                    cuentaExistente.Privado = cuentaActualizada.Privado;
+
 
                     await _context.SaveChangesAsync();
                 }
@@ -116,6 +117,8 @@ namespace Api_Usuarios.Controllers
 
             return BadRequest(ModelState);
         }
+
+
 
         // DELETE: Cuenta/5
         [HttpDelete("{id}")]

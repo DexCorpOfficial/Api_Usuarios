@@ -140,6 +140,39 @@ namespace Api_Usuarios.Controllers
             return Ok(existe);
         }
 
+        [HttpPost("EnviarMensaje")]
+        public async Task<IActionResult> EnviarMensaje([FromBody] Interactuan mensaje)
+        {   
+            _context.Interactuan.Add(mensaje);
+            await _context.SaveChangesAsync();
+
+            return Ok(mensaje);
+        }
+
+        [HttpGet("ObtenerMensajes/{idUsuario1}/{idUsuario2}")]
+        public async Task<IActionResult> ObtenerMensajes(int idUsuario1, int idUsuario2)
+        {
+            var mensajes = await _context.Interactuan
+                .Where(m => (m.IDdeEmisor == idUsuario1 && m.IDdeReceptor == idUsuario2 && m.Seguido == false) || (m.IDdeEmisor == idUsuario2 && m.IDdeReceptor == idUsuario1  && m.Seguido == false))
+                .OrderBy(m => m.Fecha)
+                .ToListAsync();
+
+            // Cambiar el estado de los mensajes a 'Leído' cuando el usuario entra al chat
+            foreach (var mensaje in mensajes)
+            {
+                if (mensaje.Estado == "Enviado")
+                {
+                    mensaje.Estado = "Leído";
+                    _context.Update(mensaje);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(mensajes);
+        }
+
+
 
 
         // DELETE: Interactuan/Delete/{idInteraccion}
