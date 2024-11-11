@@ -81,6 +81,24 @@ namespace Api_Usuarios.Controllers
             return Ok(interactuan);
         }
 
+        [HttpPut("MarcarComoLeidos")]
+        public async Task<IActionResult> MarcarComoLeidos([FromBody] List<int> mensajeIds)
+        {
+            var mensajes = await _context.Interactuan
+                .Where(m => mensajeIds.Contains(m.ID) && m.Estado == "Enviado")
+                .ToListAsync();
+
+            foreach (var mensaje in mensajes)
+            {
+                mensaje.Estado = "Leído";
+                _context.Update(mensaje);
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(mensajes);
+        }
+
+
         // POST: Interactuan/Create
         [HttpPost("Create")]
         public async Task<ActionResult<Interactuan>> CreateInteraccion([FromBody] Interactuan interactuan)
@@ -152,25 +170,28 @@ namespace Api_Usuarios.Controllers
         [HttpGet("ObtenerMensajes/{idUsuario1}/{idUsuario2}")]
         public async Task<IActionResult> ObtenerMensajes(int idUsuario1, int idUsuario2)
         {
+            // Obtener los mensajes entre los dos usuarios
             var mensajes = await _context.Interactuan
-                .Where(m => (m.IDdeEmisor == idUsuario1 && m.IDdeReceptor == idUsuario2 && m.Seguido == false) || (m.IDdeEmisor == idUsuario2 && m.IDdeReceptor == idUsuario1  && m.Seguido == false))
+                .Where(m => (m.IDdeEmisor == idUsuario1 && m.IDdeReceptor == idUsuario2 && m.Seguido == false) ||
+                            (m.IDdeEmisor == idUsuario2 && m.IDdeReceptor == idUsuario1 && m.Seguido == false))
                 .OrderBy(m => m.Fecha)
                 .ToListAsync();
 
-            // Cambiar el estado de los mensajes a 'Leído' cuando el usuario entra al chat
+            // Marcar los mensajes como leídos si están en estado "Enviado"
             foreach (var mensaje in mensajes)
             {
                 if (mensaje.Estado == "Enviado")
                 {
-                    mensaje.Estado = "Leído";
-                    _context.Update(mensaje);
+                    mensaje.Estado = "Leído";  // Cambiar el estado a "Leído"
+                    _context.Update(mensaje);  // Actualizar el mensaje en la base de datos
                 }
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();  // Guardar los cambios en la base de datos
 
             return Ok(mensajes);
         }
+
 
 
 
