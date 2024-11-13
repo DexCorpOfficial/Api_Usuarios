@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -10,9 +11,11 @@ namespace Api_Usuarios.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)] // Configura ID como autoincremental
         public int ID { get; set; }
 
+        [JsonProperty("IDdeEmisor")]
         [Required]
         public int IDdeEmisor { get; set; }
 
+        [JsonProperty("IDdeReceptor")]
         [Required]
         public int IDdeReceptor { get; set; }
 
