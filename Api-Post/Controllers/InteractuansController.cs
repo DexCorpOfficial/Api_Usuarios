@@ -81,24 +81,6 @@ namespace Api_Usuarios.Controllers
             return Ok(interactuan);
         }
 
-        [HttpPut("MarcarComoLeidos")]
-        public async Task<IActionResult> MarcarComoLeidos([FromBody] List<int> mensajeIds)
-        {
-            var mensajes = await _context.Interactuan
-                .Where(m => mensajeIds.Contains(m.ID) && m.Estado == "Enviado")
-                .ToListAsync();
-
-            foreach (var mensaje in mensajes)
-            {
-                mensaje.Estado = "Leído";
-                _context.Update(mensaje);
-            }
-
-            await _context.SaveChangesAsync();
-            return Ok(mensajes);
-        }
-
-
         // POST: Interactuan/Create
         [HttpPost("Create")]
         public async Task<ActionResult<Interactuan>> CreateInteraccion([FromBody] Interactuan interactuan)
@@ -170,26 +152,58 @@ namespace Api_Usuarios.Controllers
         [HttpGet("ObtenerMensajes/{idUsuario1}/{idUsuario2}")]
         public async Task<IActionResult> ObtenerMensajes(int idUsuario1, int idUsuario2)
         {
-            var mensajes = await _context.Interactuan
-                .Where(m => (m.IDdeEmisor == idUsuario1 && m.IDdeReceptor == idUsuario2 && m.Seguido == false) || (m.IDdeEmisor == idUsuario2 && m.IDdeReceptor == idUsuario1  && m.Seguido == false))
-                .OrderBy(m => m.Fecha)
-                .ToListAsync();
+            // Si idUsuario2 es 0, devolver todos los mensajes relacionados con idUsuario1
+            IQueryable<Interactuan> mensajesQuery;
 
-            // Cambiar el estado de los mensajes a 'Leído' cuando el usuario entra al chat
-            foreach (var mensaje in mensajes)
+            if (idUsuario2 == 0)
             {
-                if (mensaje.Estado == "Enviado")
-                {
-                    mensaje.Estado = "Leído";
-                    _context.Update(mensaje);
-                }
+                // Obtener todos los mensajes enviados o recibidos por idUsuario1
+                mensajesQuery = _context.Interactuan
+                    .Where(m => (m.IDdeEmisor == idUsuario1 || m.IDdeReceptor == idUsuario1) && m.Seguido == false)
+                    .OrderBy(m => m.Fecha);
+            }
+            else
+            {
+                // Obtener mensajes entre idUsuario1 e idUsuario2
+                mensajesQuery = _context.Interactuan
+                    .Where(m => (m.IDdeEmisor == idUsuario1 && m.IDdeReceptor == idUsuario2 && m.Seguido == false) ||
+                                (m.IDdeEmisor == idUsuario2 && m.IDdeReceptor == idUsuario1 && m.Seguido == false))
+                    .OrderBy(m => m.Fecha);
             }
 
-            await _context.SaveChangesAsync();
+            var mensajes = await mensajesQuery.ToListAsync();
 
             return Ok(mensajes);
         }
 
+
+        [HttpPost("LeerMensaje/{mensajeId}")]
+        public async Task<IActionResult> LeerMensaje(int mensajeId)
+        {
+            // Buscar el mensaje por su ID
+            var mensaje = await _context.Interactuan
+                .FirstOrDefaultAsync(m => m.ID == mensajeId); // Ajusta 'ID' si tu campo tiene otro nombre
+
+            if (mensaje == null)
+            {
+                // Si el mensaje no se encuentra, simplemente se devuelve un 404 sin detalles adicionales
+                return NotFound();
+            }
+
+            // Cambiar el estado a "Leído"
+            if (mensaje.Estado == "Enviado")
+            {
+                mensaje.Estado = "Leído";
+                _context.Update(mensaje);
+                await _context.SaveChangesAsync();
+
+                // Respuesta exitosa sin detalles adicionales
+                return Ok();
+            }
+
+            // Si el mensaje ya está marcado como "Leído", se devuelve un 400 sin mensaje adicional
+            return BadRequest();
+        }
 
 
 
